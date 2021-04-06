@@ -1,5 +1,6 @@
 package br.com.zupacademy.alonso.casadocodigo.controller.form;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -9,37 +10,33 @@ import br.com.zupacademy.alonso.casadocodigo.model.Author;
 
 public class AuthorForm {
 	
-	@NotNull @NotEmpty @Length(min = 5)
+	@NotBlank @Length(min = 5)
 	private String nome;
-	@NotNull @NotEmpty @Length(min = 5,max = 300)
+	@NotBlank @Length(min = 5,max = 300)
 	private String descricao;
-	@NotNull @NotEmpty @Length(min = 5)
+	@NotBlank
 	private String email;
 	
+	public AuthorForm(String nome, String email, String descricao){
+		this.email = email.toLowerCase();
+		this.descricao = descricao;
+		this.nome = nome;
+	}
+
 	public String getNome() {
 		return nome;
 	}
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
+
 	public String getDescricao() {
 		return descricao;
 	}
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
-	}
+
 	public String getEmail() {
 		return email;
 	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
 	
 	public Author converter() {
-		Author author = new Author();
-		author.setNome(this.nome);
-		author.setEmail(this.email);
-		author.setDescricao(this.descricao);
+		Author author = new Author(this.nome,this.email,this.descricao);
 		return author;
 	}
 	

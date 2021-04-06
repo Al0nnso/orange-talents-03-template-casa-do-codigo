@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 @Entity
 public class Author {
 	@Id
@@ -16,41 +18,39 @@ public class Author {
 	private String nome;
 	private String email;
 	private String descricao;
+	
+	@CreationTimestamp
 	private LocalDateTime data = LocalDateTime.now();
 	
+	@Deprecated
 	public Author() {
+	}
+
+	public Author(String nome, String email, String descricao){
+		this.email = email.toLowerCase();
+		this.descricao = descricao;
+		this.nome = nome;
 	}
 
 	public int getId() {
 		return id;
 	}
 
-	public void setId(int id) {
-		this.id = id;
-	}
-
 	public String getNome() {
 		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
 	}
 
 	public String getEmail() {
 		return email;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
 	public String getDescricao() {
 		return descricao;
 	}
-
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
+	
+	@Override
+	public String toString() {
+		return "Author [ "+this.getNome()+" - "+this.getEmail()+" / "+this.getDescricao()+" ]";
 	}
 
 }
