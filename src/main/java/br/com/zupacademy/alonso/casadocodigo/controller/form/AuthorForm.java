@@ -1,5 +1,6 @@
 package br.com.zupacademy.alonso.casadocodigo.controller.form;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -14,7 +15,7 @@ public class AuthorForm {
 	private String nome;
 	@NotBlank @Length(min = 5,max = 300)
 	private String descricao;
-	@NotBlank
+	@NotBlank @Email
 	private String email;
 	
 	public AuthorForm(String nome, String email, String descricao){

@@ -8,49 +8,42 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-@Entity
+import org.hibernate.annotations.CreationTimestamp;
+
+import br.com.zupacademy.alonso.casadocodigo.model.Author;
+
 public class AuthorDto {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+
+	//private int id;
 	private String nome;
 	private String email;
 	private String descricao;
-	private LocalDateTime data = LocalDateTime.now();
-	
-	public AuthorDto() {
-	}
+	private LocalDateTime data;
 
-	public int getId() {
-		return id;
+	public AuthorDto(Author author){
+		//this.id=author.getId();
+		this.email = author.getEmail();
+		this.descricao = author.getDescricao();
+		this.nome = author.getNome();
+		this.data = author.getData();
 	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
+	/*public int getId() {
+		return this.id;
+	}*/
 
 	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
+		return this.nome;
 	}
 
 	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
+		return this.email;
 	}
 
 	public String getDescricao() {
-		return descricao;
+		return this.descricao;
 	}
 
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
+	public LocalDateTime getData(){
+		return this.data;
 	}
-
 }

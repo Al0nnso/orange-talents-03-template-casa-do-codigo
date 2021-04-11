@@ -29,17 +29,14 @@ import br.com.zupacademy.alonso.casadocodigo.repository.AuthorRepository;
 public class AuthorController {
 	
 	@Autowired
-	private AuthorRepository repository;
-	
-	@Autowired
 	private ProibeEmailDuplicadoValidator proibeEmailDuplicadoValidator;
 
-	/*
+	//@Autowired
+	private final AuthorRepository repository;
 	// A mesma coisa que @Autowired
 	public AuthorController(AuthorRepository repository) {
 		this.repository = repository;
 	}
-	*/
 	
 	@InitBinder
 	public void init(WebDataBinder binder) {
@@ -47,12 +44,13 @@ public class AuthorController {
 	}
 
 	@PostMapping("/add")
-	public String createAuthor(@RequestBody @Valid AuthorForm form) {
+	public ResponseEntity<AuthorDto> createAuthor(@RequestBody @Valid AuthorForm form) {
 
 		Author author = form.converter();
 
 		repository.save(author);
-		return author.toString();
+		AuthorDto response = new AuthorDto(author);
+		return ResponseEntity.ok(response);
 	}
 	
 }

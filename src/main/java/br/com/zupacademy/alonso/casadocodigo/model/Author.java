@@ -47,6 +47,10 @@ public class Author {
 	public String getDescricao() {
 		return descricao;
 	}
+
+	public LocalDateTime getData(){
+		return this.data;
+	}
 	
 	@Override
 	public String toString() {
