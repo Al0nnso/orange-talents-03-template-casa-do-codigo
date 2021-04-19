@@ -6,10 +6,15 @@ import java.time.LocalDateTime;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Future;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 
 import br.com.zupacademy.alonso.casadocodigo.model.Author;
@@ -22,21 +27,24 @@ public class BookForm {
     private String title;
     @NotBlank @Length(max = 500)
     private String summary;
-    @NotBlank
-    @Length(min = 20)
-    private Float price;
-    @Length(min = 100)
+    @NonNull @Min(value = 20)
+    private Double price;
+    @NonNull @Min(value = 100)
     private Integer pages;
-    @NotBlank
+    @NonNull
     private Double isbn;
-    @Future
+    @NonNull @Future
     private LocalDateTime release;
     @NonNull
     private Category category;
     @NonNull
     private Author author;
+    
+    @Deprecated
+    public BookForm(){
+    }
 
-    public BookForm(String title, String summary, Float price, Integer pages, Double isbn){
+    public BookForm(String title, String summary, Double price, Integer pages, Double isbn){
         this.title=title;
         this.summary=summary;
         this.price=price;
@@ -65,7 +73,7 @@ public class BookForm {
     public Integer getPages() {
         return pages;
     }
-    public Float getPrice() {
+    public Double getPrice() {
         return price;
     }
     public LocalDateTime getRelease() {
@@ -80,9 +88,17 @@ public class BookForm {
 
     public Book converter(){
         Book book = new Book(this.title,this.summary,this.price,this.pages,this.isbn);
-        book.setAuthor(this.author);
-        book.setCategory(this.category);
-        book.setRelease(this.release);
+        
+        if(this.author != null){
+            book.setAuthor(this.author);
+        }
+        if(this.category != null){
+            book.setCategory(this.category);
+        }
+        if(this.release != null){
+            book.setRelease(this.release);
+        }
+
         return book;
     }
 

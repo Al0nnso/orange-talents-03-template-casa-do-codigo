@@ -1,28 +1,39 @@
 package br.com.zupacademy.alonso.casadocodigo.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.validation.constraints.NotBlank;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
-import org.springframework.lang.NonNull;
-
+@Entity
+@Table(name="books")
 public class Book {
-    @Id
+    @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
     private String title;
     private String summary;
-    private Float price;
+    private Double price;
     private Integer pages;
     private Double isbn;
     private LocalDateTime release;
+    @ManyToOne
     private Category category;
+    @ManyToOne
     private Author author;
 
-    public Book(String title, String summary, Float price, Integer pages, Double isbn){
+    @Deprecated
+    public Book(){
+    }
+
+    public Book(String title, String summary, Double price, Integer pages, Double isbn){
         this.title=title;
         this.summary=summary;
         this.price=price;
@@ -39,6 +50,7 @@ public class Book {
     public void setAuthor(Author author) {
         this.author = author;
     }
+
     public Category getCategory() {
         return category;
     }
@@ -55,7 +67,7 @@ public class Book {
     public Integer getPages() {
         return pages;
     }
-    public Float getPrice() {
+    public Double getPrice() {
         return price;
     }
     public LocalDateTime getRelease() {
