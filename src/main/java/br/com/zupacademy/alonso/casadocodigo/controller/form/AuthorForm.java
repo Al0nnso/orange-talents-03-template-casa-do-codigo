@@ -13,7 +13,7 @@ public class AuthorForm {
 	
 	@NotBlank @Length(min = 5)
 	private String nome;
-	@NotBlank @Length(min = 5,max = 300)
+	@NotBlank @Length(min = 5,max = 400)
 	private String descricao;
 	@NotBlank @Email
 	private String email;

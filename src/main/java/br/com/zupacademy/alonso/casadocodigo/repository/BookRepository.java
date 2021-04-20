@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import br.com.zupacademy.alonso.casadocodigo.model.Book;
 
 @Repository
-public interface BookRepository extends CrudRepository<Book,Integer>{
-	boolean existsById(Integer id);
+public interface BookRepository extends CrudRepository<Book,Long>{
+	boolean existsById(Long id);
 }

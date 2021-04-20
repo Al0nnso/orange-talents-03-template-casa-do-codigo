@@ -11,14 +11,18 @@ import javax.persistence.Table;
 public class Category {
     @Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Long id;
     private String nome;
+
+    @Deprecated
+    public Category(){
+    }
 
     public Category(String nome){
         this.nome=nome;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 

@@ -1,5 +1,6 @@
 package br.com.zupacademy.alonso.casadocodigo.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -8,8 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -17,28 +16,31 @@ import javax.persistence.Table;
 public class Book {
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
     private String title;
     private String summary;
     private Double price;
     private Integer pages;
-    private Double isbn;
-    private LocalDateTime release;
-    @ManyToOne
-    private Category category;
+    private String isbn;
+    private LocalDate release;
     @ManyToOne
     private Author author;
+    @ManyToOne
+    private Category category;
 
     @Deprecated
     public Book(){
     }
 
-    public Book(String title, String summary, Double price, Integer pages, Double isbn){
+    public Book(String title, String summary, Double price, Integer pages, String isbn){
         this.title=title;
         this.summary=summary;
         this.price=price;
         this.pages=pages;
         this.isbn=isbn;
+        //this.release=release;
+        //this.author=author;
+        //this.category=category;
     }
 
     public String getTitle() {
@@ -50,7 +52,6 @@ public class Book {
     public void setAuthor(Author author) {
         this.author = author;
     }
-
     public Category getCategory() {
         return category;
     }
@@ -58,10 +59,10 @@ public class Book {
         this.category = category;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
-    public Double getIsbn() {
+    public String getIsbn() {
         return isbn;
     }
     public Integer getPages() {
@@ -70,10 +71,10 @@ public class Book {
     public Double getPrice() {
         return price;
     }
-    public LocalDateTime getRelease() {
+    public LocalDate getRelease() {
         return release;
     }
-    public void setRelease(LocalDateTime release) {
+    public void setRelease(LocalDate release) {
         this.release = release;
     }
     public String getSummary() {

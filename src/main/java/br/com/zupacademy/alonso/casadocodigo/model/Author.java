@@ -16,7 +16,7 @@ import org.hibernate.annotations.CreationTimestamp;
 public class Author {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Long id;
 	private String nome;
 	private String email;
 	private String descricao;
@@ -34,7 +34,7 @@ public class Author {
 		this.nome = nome;
 	}
 
-	public int getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -51,7 +51,7 @@ public class Author {
 	}
 
 	public LocalDateTime getData(){
-		return this.data;
+		return data;
 	}
 	
 	@Override

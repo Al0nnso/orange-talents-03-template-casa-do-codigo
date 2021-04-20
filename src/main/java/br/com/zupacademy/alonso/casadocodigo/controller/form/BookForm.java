@@ -1,8 +1,10 @@
 package br.com.zupacademy.alonso.casadocodigo.controller.form;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,9 +15,14 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import br.com.zupacademy.alonso.casadocodigo.model.Author;
 import br.com.zupacademy.alonso.casadocodigo.model.Book;
@@ -27,47 +34,50 @@ public class BookForm {
     private String title;
     @NotBlank @Length(max = 500)
     private String summary;
-    @NonNull @Min(value = 20)
+    @NonNull @Min(20)
     private Double price;
-    @NonNull @Min(value = 100)
+    @NonNull @Min(100)
     private Integer pages;
     @NonNull
-    private Double isbn;
-    @NonNull @Future
-    private LocalDateTime release;
+    private String isbn;
+    @NonNull @Future //@JsonFormat(pattern = "dd/MM/yyyy",shape = Shape.STRING)
+    private LocalDate release;
     @NonNull
-    private Category category;
+    private Long authorID;
     @NonNull
-    private Author author;
+    private Long categoryID;
     
     @Deprecated
     public BookForm(){
     }
 
-    public BookForm(String title, String summary, Double price, Integer pages, Double isbn){
+    public BookForm(String title, String summary, Double price, Integer pages, String isbn){
         this.title=title;
         this.summary=summary;
         this.price=price;
         this.pages=pages;
         this.isbn=isbn;
+        //this.release=release;
+        //this.authorID=authorID;
+        //this.categoryID=categoryID;
     }
 
     public String getTitle() {
         return title;
     }
-    public Author getAuthor() {
-        return author;
+    public Long getAuthorID() {
+        return authorID;
     }
-    public void setAuthor(Author author) {
-        this.author = author;
+    public Long getCategoryID() {
+        return categoryID;
     }
-    public Category getCategory() {
-        return category;
+    public void setAuthorID(Long authorID) {
+        this.authorID = authorID;
     }
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setCategoryID(Long categoryID) {
+        this.categoryID = categoryID;
     }
-    public Double getIsbn() {
+    public String getIsbn() {
         return isbn;
     }
     public Integer getPages() {
@@ -76,28 +86,46 @@ public class BookForm {
     public Double getPrice() {
         return price;
     }
-    public LocalDateTime getRelease() {
+    public LocalDate getRelease() {
         return release;
     }
-    public void setRelease(LocalDateTime release) {
+    public void setRelease(LocalDate release) {
         this.release = release;
     }
     public String getSummary() {
         return summary;
     }
+    @Transactional
+    public Book converter(EntityManager manager){
+        //Assert.state(author!=null,"O ID do author é nulo: "+this.authorID);
+        //Assert.state(category!=null,"O ID da categoria é nulo: "+this.categoryID);
 
-    public Book converter(){
         Book book = new Book(this.title,this.summary,this.price,this.pages,this.isbn);
+        //System.out.println(this.authorID);
+        /*if(this.authorID){
+
+        }*/
         
-        if(this.author != null){
-            book.setAuthor(this.author);
+        /*if(form.getAuthorID()!=null && manager.find(Author.class,form.getAuthorID())==null) {
+            errors.rejectValue("author", null, "Não existe um author com este id: "+form.getAuthorID());
         }
-        if(this.category != null){
-            book.setCategory(this.category);
+
+        if(form.getCategoryID()!=null && manager.find(Category.class,form.getCategoryID())==null) {
+            errors.rejectValue("category", null, "Não existe uma category com este id: "+form.getCategoryID());
+        }*/
+
+        if(this.authorID!=null){
+            Author author = manager.find(Author.class, this.authorID);
+            Assert.state(author!=null,"O ID do author é nulo: "+this.authorID);
+            book.setAuthor(author);
         }
-        if(this.release != null){
-            book.setRelease(this.release);
+        if(this.categoryID!=null){
+            Category category = manager.find(Category.class, this.categoryID);
+            Assert.state(category!=null,"O ID da categoria é nulo: "+this.categoryID);
+            book.setCategory(category);
         }
+
+        book.setRelease(this.release);
 
         return book;
     }

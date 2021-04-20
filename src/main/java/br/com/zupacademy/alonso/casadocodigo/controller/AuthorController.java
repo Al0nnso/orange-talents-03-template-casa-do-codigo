@@ -43,7 +43,7 @@ public class AuthorController {
 		binder.addValidators(proibeEmailDuplicadoValidator);
 	}
 
-	@PostMapping("/add")
+	@PostMapping("/autor")
 	public ResponseEntity<AuthorDto> createAuthor(@RequestBody @Valid AuthorForm form) {
 
 		Author author = form.converter();
