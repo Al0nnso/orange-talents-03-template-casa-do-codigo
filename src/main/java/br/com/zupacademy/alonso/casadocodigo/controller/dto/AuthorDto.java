@@ -1,15 +1,6 @@
 package br.com.zupacademy.alonso.casadocodigo.controller.dto;
 
 import java.time.LocalDateTime;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
-import org.hibernate.annotations.CreationTimestamp;
-
 import br.com.zupacademy.alonso.casadocodigo.model.Author;
 
 public class AuthorDto {
