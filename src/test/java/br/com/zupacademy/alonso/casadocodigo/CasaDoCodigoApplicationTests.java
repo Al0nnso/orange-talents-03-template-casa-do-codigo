@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -31,6 +32,9 @@ import br.com.zupacademy.alonso.casadocodigo.controller.dto.AuthorDto;
 import br.com.zupacademy.alonso.casadocodigo.controller.form.AuthorForm;
 import br.com.zupacademy.alonso.casadocodigo.controller.form.BookForm;
 import br.com.zupacademy.alonso.casadocodigo.controller.form.CategoryForm;
+import br.com.zupacademy.alonso.casadocodigo.controller.form.CountryForm;
+import br.com.zupacademy.alonso.casadocodigo.controller.form.PaisForm;
+import br.com.zupacademy.alonso.casadocodigo.controller.form.StateForm;
 import br.com.zupacademy.alonso.casadocodigo.model.Author;
 import br.com.zupacademy.alonso.casadocodigo.repository.AuthorRepository;
 
@@ -81,6 +85,19 @@ public class CasaDoCodigoApplicationTests {
 		//testStatusCode(uri, new BookForm("null", "null", 234.90, 567, "null"), 400);// Null book
 	}
 
+	@Test
+	public void criaPaisTest() throws Exception{
+
+		URI uri = new URI("/pais");
+
+		CountryForm pais = new CountryForm("Brasil");
+		StateForm estado = new StateForm("Minas Gerais",Long.valueOf(1));
+
+		testStatusCode(uri, pais, 200);// Pais creation
+		testStatusCode(uri, estado, 200);// Pais creation
+
+	}
+
 	//@Test
 	public void bookIdInexistenteTest() throws Exception{
 
@@ -100,8 +117,8 @@ public class CasaDoCodigoApplicationTests {
 
 		form.setCategoryID(Long.valueOf(1));
 		// Inexistent category ID
-		Assert.assertThrows(IllegalStateException.class, 
-		()-> MockMvcRequestBuilders.post(uri).content(json(form)).contentType(MediaType.APPLICATION_JSON));
+		//Assert.assertThrows(IllegalStateException.class, 
+		//()-> MockMvcRequestBuilders.post(uri).content(json(form)).contentType(MediaType.APPLICATION_JSON));
 		
 		MockMvcRequestBuilders.post(new URI("/categoria")).content(json(new CategoryForm("Teste"))).contentType(MediaType.APPLICATION_JSON);
 		testStatusCode(uri, form, 200);// Existent category ID
