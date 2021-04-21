@@ -36,8 +36,9 @@ public class StateForm {
     public State converter(EntityManager manager){
         
         Country country = manager.find(Country.class,this.countryID);
+        System.out.println(country);
         Assert.state(country!=null,"O country ID é nulo: "+this.countryID);
-
+        
         State state = new State(this.name,country);
         return state;
     }

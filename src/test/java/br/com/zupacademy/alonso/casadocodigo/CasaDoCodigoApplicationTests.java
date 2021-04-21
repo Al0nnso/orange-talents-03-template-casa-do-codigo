@@ -1,9 +1,7 @@
 package br.com.zupacademy.alonso.casadocodigo;
 
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -12,7 +10,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.Test;
+import org.junit.Assert;
 import org.junit.runner.RunWith;
+import org.mockito.internal.matchers.InstanceOf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,11 +20,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.util.Assert;
 import org.springframework.web.util.NestedServletException;
 
 import br.com.zupacademy.alonso.casadocodigo.controller.AuthorController;
@@ -33,7 +33,6 @@ import br.com.zupacademy.alonso.casadocodigo.controller.form.AuthorForm;
 import br.com.zupacademy.alonso.casadocodigo.controller.form.BookForm;
 import br.com.zupacademy.alonso.casadocodigo.controller.form.CategoryForm;
 import br.com.zupacademy.alonso.casadocodigo.controller.form.CountryForm;
-import br.com.zupacademy.alonso.casadocodigo.controller.form.PaisForm;
 import br.com.zupacademy.alonso.casadocodigo.controller.form.StateForm;
 import br.com.zupacademy.alonso.casadocodigo.model.Author;
 import br.com.zupacademy.alonso.casadocodigo.repository.AuthorRepository;
@@ -41,7 +40,6 @@ import br.com.zupacademy.alonso.casadocodigo.repository.AuthorRepository;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-
 public class CasaDoCodigoApplicationTests {
 
 	@Autowired
@@ -86,42 +84,47 @@ public class CasaDoCodigoApplicationTests {
 	}
 
 	@Test
-	public void criaPaisTest() throws Exception{
-
-		URI uri = new URI("/pais");
+	public void criaRegiaoTest() throws Exception{
 
 		CountryForm pais = new CountryForm("Brasil");
 		StateForm estado = new StateForm("Minas Gerais",Long.valueOf(1));
+		StateForm estadoIDInexistente = new StateForm("Rio de Janeiro",Long.valueOf(2));
 
-		testStatusCode(uri, pais, 200);// Pais creation
-		testStatusCode(uri, estado, 200);// Pais creation
-
+		testStatusCode(new URI("/pais"), pais, 200);// Pais creation
+		testStatusCode(new URI("/estado"), estado, 200);// Pais creation
+		testSpringError(new URI("/estado"), estadoIDInexistente);// Pais creation
 	}
 
-	//@Test
+	@Test
 	public void bookIdInexistenteTest() throws Exception{
 
 		URI uri = new URI("/livro");
 
-		BookForm form = new BookForm("null", "null", 234.90, 567, "null");
+		BookForm form = new BookForm("Test", "Test", 234.90, 567, "Test");
+		testStatusCode(uri, form, 200);
 		form.setAuthorID(Long.valueOf(1));
 		// Inexistent author ID
-		//MockMvcRequestBuilders.post(uri).content(json(form)).contentType(MediaType.APPLICATION_JSON);
-		//Exception exception = Assert.assertThrows(NestedServletException.class, 
-		//()-> MockMvcRequestBuilders.post(uri).content(json(form)).contentType(MediaType.APPLICATION_JSON));
-		//assertTrue(exception.getMessage().contains("not found"));
+		testSpringError(uri, form);
 
 		// Existent author ID
-		MockMvcRequestBuilders.post(new URI("/autor")).content(json(new AuthorForm("Teste","teste@teste.com","teste teste"))).contentType(MediaType.APPLICATION_JSON);
-		testStatusCode(uri, form, 200);// Existent author ID
+		mockMvc.perform(MockMvcRequestBuilders.post(new URI("/autor")).content(json(new AuthorForm("TesteForBook","testeforbook@teste.com","teste para o book"))).contentType(MediaType.APPLICATION_JSON));
+		testStatusCode(uri, form, 200);
 
-		form.setCategoryID(Long.valueOf(1));
 		// Inexistent category ID
-		//Assert.assertThrows(IllegalStateException.class, 
-		//()-> MockMvcRequestBuilders.post(uri).content(json(form)).contentType(MediaType.APPLICATION_JSON));
-		
-		MockMvcRequestBuilders.post(new URI("/categoria")).content(json(new CategoryForm("Teste"))).contentType(MediaType.APPLICATION_JSON);
-		testStatusCode(uri, form, 200);// Existent category ID
+		form.setCategoryID(Long.valueOf(1));
+		testSpringError(uri, form);
+
+		// Existent category ID
+		mockMvc.perform(MockMvcRequestBuilders.post(new URI("/categoria")).content(json(new CategoryForm("Teste"))).contentType(MediaType.APPLICATION_JSON));
+		testStatusCode(uri, form, 200);
+	}
+
+	public void testSpringError(URI uri,Object form) throws Exception{
+		try{
+			mockMvc.perform(MockMvcRequestBuilders.post(uri).content(json(form)).contentType(MediaType.APPLICATION_JSON));
+		}catch(NestedServletException e){
+			Assert.assertEquals(NestedServletException.class, e.getClass());
+		}
 	}
 	
 	public void testStatusCode(URI uri,Object form,Integer code) throws Exception{

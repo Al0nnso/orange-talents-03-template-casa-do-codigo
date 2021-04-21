@@ -16,6 +16,10 @@ public class Country {
     private Long id;
     private String name;
 
+    @Deprecated
+    public Country(){
+    }
+
     public Country(String name){
         this.name=name;
     }

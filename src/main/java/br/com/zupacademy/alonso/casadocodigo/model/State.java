@@ -18,6 +18,10 @@ public class State {
     @ManyToOne
     private Country country;
 
+    @Deprecated
+    public State(){
+    }
+
     public State(String name,Country country){
         this.name=name;
         this.country=country;
