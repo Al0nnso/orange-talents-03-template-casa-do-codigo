@@ -20,7 +20,6 @@ import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.lang.NonNull;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
@@ -34,17 +33,17 @@ public class BookForm {
     private String title;
     @NotBlank @Length(max = 500)
     private String summary;
-    @NonNull @Min(20)
+    @NotNull @Min(20)
     private Double price;
-    @NonNull @Min(100)
+    @NotNull @Min(100)
     private Integer pages;
-    @NonNull
+    @NotNull
     private String isbn;
-    @NonNull @Future //@JsonFormat(pattern = "dd/MM/yyyy",shape = Shape.STRING)
+    @NotNull @Future //@JsonFormat(pattern = "dd/MM/yyyy",shape = Shape.STRING)
     private LocalDate release;
-    @NonNull
+    @NotNull
     private Long authorID;
-    @NonNull
+    @NotNull
     private Long categoryID;
     
     @Deprecated

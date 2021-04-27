@@ -14,6 +14,7 @@ import org.junit.Assert;
 import org.junit.runner.RunWith;
 import org.mockito.internal.matchers.InstanceOf;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,13 +33,14 @@ import br.com.zupacademy.alonso.casadocodigo.controller.dto.AuthorDto;
 import br.com.zupacademy.alonso.casadocodigo.controller.form.AuthorForm;
 import br.com.zupacademy.alonso.casadocodigo.controller.form.BookForm;
 import br.com.zupacademy.alonso.casadocodigo.controller.form.CategoryForm;
+import br.com.zupacademy.alonso.casadocodigo.controller.form.ClientForm;
 import br.com.zupacademy.alonso.casadocodigo.controller.form.CountryForm;
 import br.com.zupacademy.alonso.casadocodigo.controller.form.StateForm;
 import br.com.zupacademy.alonso.casadocodigo.model.Author;
 import br.com.zupacademy.alonso.casadocodigo.repository.AuthorRepository;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(properties = {"spring.config.name=myapp-test-h2","myapp.trx.datasource.url=jdbc:h2:mem:trxServiceStatus"})
 @AutoConfigureMockMvc
 public class CasaDoCodigoApplicationTests {
 
@@ -84,6 +86,25 @@ public class CasaDoCodigoApplicationTests {
 	}
 
 	@Test
+	public void criaClienteTest() throws Exception{
+
+		URI uri = new URI("/cliente");
+
+		ClientForm cliente = new ClientForm("Andres","Alonso","andresalonnso@gmail.com","653242655-00","Rua Fernando Carrvalho 35","Belo Horizonte",Long.valueOf(1),"31720390","31996644783");
+		cliente.setStateID(Long.valueOf(1));
+
+		testSpringError(uri, cliente);
+
+		// Create pais e estado
+		CountryForm pais = new CountryForm("Bahamas");
+		StateForm estado = new StateForm("Naosei",Long.valueOf(1));
+		criaObjeto(new URI("/pais"), pais);
+		criaObjeto(new URI("/estado"), estado);
+
+		testStatusCode(uri, cliente, 200);
+	}
+
+	@Test
 	public void criaRegiaoTest() throws Exception{
 
 		CountryForm pais = new CountryForm("Brasil");
@@ -107,7 +128,7 @@ public class CasaDoCodigoApplicationTests {
 		testSpringError(uri, form);
 
 		// Existent author ID
-		mockMvc.perform(MockMvcRequestBuilders.post(new URI("/autor")).content(json(new AuthorForm("TesteForBook","testeforbook@teste.com","teste para o book"))).contentType(MediaType.APPLICATION_JSON));
+		criaObjeto(new URI("/autor"),new AuthorForm("TesteForBook","testeforbook@teste.com","teste para o book"));
 		testStatusCode(uri, form, 200);
 
 		// Inexistent category ID
@@ -115,16 +136,20 @@ public class CasaDoCodigoApplicationTests {
 		testSpringError(uri, form);
 
 		// Existent category ID
-		mockMvc.perform(MockMvcRequestBuilders.post(new URI("/categoria")).content(json(new CategoryForm("Teste"))).contentType(MediaType.APPLICATION_JSON));
+		criaObjeto(new URI("/categoria"),new CategoryForm("Teste"));
 		testStatusCode(uri, form, 200);
 	}
 
 	public void testSpringError(URI uri,Object form) throws Exception{
 		try{
-			mockMvc.perform(MockMvcRequestBuilders.post(uri).content(json(form)).contentType(MediaType.APPLICATION_JSON));
+			criaObjeto(uri, form);
 		}catch(NestedServletException e){
 			Assert.assertEquals(NestedServletException.class, e.getClass());
 		}
+	}
+
+	public void criaObjeto(URI uri,Object form) throws Exception{
+		mockMvc.perform(MockMvcRequestBuilders.post(uri).content(json(form)).contentType(MediaType.APPLICATION_JSON));
 	}
 	
 	public void testStatusCode(URI uri,Object form,Integer code) throws Exception{
